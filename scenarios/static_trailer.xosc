@@ -1,0 +1,182 @@
+<OpenSCENARIO>
+    <FileHeader 
+        revMajor = '1' 
+        revMinor = '1' 
+        date = '2025-09-08T23:00:00'
+        description = 'Static Car Encounter'
+        author = 'Amin Abu-Hilga'
+        />
+
+    <ParameterDeclarations>
+        <ParameterDelcaration 
+            name = 'Ego_initialSpeed'
+            parameterType = 'double' 
+            value = '40' />
+        <ParameterDeclaration 
+            name = 'laneChangeDistance' 
+            parameterType = 'double' 
+            value = '40' />
+        <ParameterDeclaration 
+            name = 'Decceleration_Rate' parameterType = 'double' value = '4' />
+        <ParameterDeclaration 
+            name = 'LaneChangeTime'
+            parameterType = 'double' 
+            value="${ (-$Ego_initialSpeed + sqrt($Ego_initialSpeed * $Ego_initialSpeed - 2 * $Decceleration_Rate * $laneChangeDistance)) / -$Decceleration_Rate }"
+        />
+    </ParameterDeclarations>
+
+    <!-- Loading Catalog for differently colored cars -->
+    <CatalogLocations>
+        <VehicleCatalog>
+            <Directory path = "../xosc/Catalogs/Vehicles"/>
+        </VehicleCatalog>
+    </CatalogLocations>
+
+    <!-- Loading 'e6mini.xodr' road -->
+    <RoadNetwork>
+      <LogicFile filepath="../xodr/e6mini.xodr"/>
+      <SceneGraphFile filepath="../models/e6mini.osgb"/>
+    </RoadNetwork>
+
+    <!-- Defining Ego and Target -->
+    <Entities>
+        <ScenarioObject name = 'Ego'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_white'/>
+        </ScenarioObject>
+        <ScenarioObject name = 'Static_Car'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'truck_trailer'/>
+        </ScenarioObject>
+    </Entities>
+
+    <!-- Story -->
+    <Storyboard>
+        <Init>
+            <Actions>
+                <Private entityRef = 'Ego'>
+
+                    <!-- Setting Initial Speed -->
+                    <PrivateAction name = 'Ego_speedInitialization'>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '$Ego_initialSpeed'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+
+                    <!-- Setting Location -->
+                    <PrivateAction name = 'Ego_positionInitialization'>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId = '0' laneId = '-4' offset = '0' s = '0'/>
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                </Private>
+
+                <!-- StaticCar -->
+                <Private entityRef = 'Static_Car'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId = '0' laneId = '-4' offset = '0' s = '130'/>
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                </Private>
+            </Actions>
+        </Init>
+
+        <Story>
+            <Act name = 'EgoAvoidsCollision'>
+                <ManeuverGroup maximumExecutionCount = '1'>
+                    <Actors>
+                        <EntityRef entityRef = 'Ego'/>
+                    </Actors>
+                    <Maneuver>
+                        <Event name = 'onAnotherCarCloseDistance' priority = 'overwrite'>
+
+                            <!-- Lane Change -->
+                            <Action name = 'LaneChangeAction'>
+                                <PrivateAction>
+                                    <LateralAction>
+                                        <LaneChangeAction>
+                                            <LaneChangeActionDynamics dynamicsShape = 'sinusoidal' value = '$LaneChangeTime' dynamicsDimension = 'time'/>
+                                            <LaneChangeTarget>
+                                                <RelativeTargetLane entityRef = 'Ego' value = '1'/>
+                                            </LaneChangeTarget>
+                                        </LaneChangeAction>
+                                    </LateralAction>
+                                </PrivateAction>
+                            </Action>
+
+                            <!-- Breaking -->
+                            <Action name = 'Breaking'>
+                                <PrivateAction>
+                                    <LongitudinalAction>
+                                        <SpeedAction>
+                                            <SpeedActionDynamics dynamicsShape = 'linear' dynamicsDimension = 'rate' value = '$Decceleration_Rate'/>
+                                            <SpeedActionTarget>
+                                                <AbsoluteTargetSpeed value = '20' />
+                                            </SpeedActionTarget>
+                                        </SpeedAction>
+                                    </LongitudinalAction>
+                                </PrivateAction>LateralAction
+                            </Action>
+
+                            <StartTrigger>
+                                <ConditionGroup>
+                                    <Condition name = 'DistanceLimitMet' delay = '0' conditionEdge = 'rising'>
+                                        <ByEntityCondition>
+                                            <TriggeringEntities triggeringEntitiesRule = 'any'>
+                                                <EntityRef entityRef = 'Ego'/>
+                                            </TriggeringEntities>
+                                            <EntityCondition>
+                                                <RelativeDistanceCondition
+                                                entityRef = 'Static_Car'
+                                                relativeDistanceType = 'longitudinal'                                            
+                                                freespace = 'true'
+                                                value = '$laneChangeDistance'
+                                                rule = 'lessThan'/>
+                                            </EntityCondition>
+                                            
+                                        </ByEntityCondition>
+                                    </Condition>
+                                </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                        <Event name = 'onNearLanesEmpty' priority = 'overwrite'>
+                            <Action name = 'ChangeLaneToStop'>
+                                <PrivateAction>
+                                    <LateralAction>
+                                        <LaneChangeAction>
+                                            <LaneChangeActionDynamics dynamicsShape = 'sinusoidal' dynamicsDimension = 'time' value = '5' />
+                                            <LaneChangeTarget>
+                                                <AbsoluteTargetLane value = '-5' />
+                                            </LaneChangeTarget>
+                                        </LaneChangeAction>
+                                    </LateralAction>
+                                </PrivateAction>
+                            </Action>
+                            <StartTrigger>
+                                <ConditionGroup>
+                                    <Condition name="AfterLaneChangeTime" delay="2" conditionEdge="rising">
+                                        <ByValueCondition>
+                                            <SimulationTimeCondition value="0" rule="greaterThan"/>
+                                        </ByValueCondition>
+                                    </Condition>
+                                </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                    </Maneuver>
+                </ManeuverGroup>
+            </Act>
+
+            
+            
+
+        </Story>
+    </Storyboard>
+</OpenSCENARIO>

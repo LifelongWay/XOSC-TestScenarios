@@ -1,0 +1,416 @@
+<OpenSCENARIO>
+    <FileHeader 
+        revMajor = '1' 
+        revMinor = '0' 
+        date = '2025-09-08T23:00:00'
+        description = 'Motorcycle splitting lane'
+        author = 'Amin Abu-Hilga'
+        />
+
+    <ParameterDeclarations>
+        <ParameterDelcaration 
+            name = 'CarsAvgSpeed'
+            parameterType = 'double' 
+            value = '40' />
+        
+    </ParameterDeclarations>
+
+    <!-- Loading Catalog for differently colored cars -->
+    <CatalogLocations>
+        <VehicleCatalog>
+            <Directory path = "../xosc/Catalogs/Vehicles"/>
+        </VehicleCatalog>
+    </CatalogLocations>
+
+    <!-- Loading 'e6mini.xodr' road -->
+    <RoadNetwork>
+      <LogicFile filepath="../xodr/e6mini.xodr"/>
+      <SceneGraphFile filepath="../models/e6mini.osgb"/>
+    </RoadNetwork>
+
+    <!-- Defining Ego and Target -->
+    <Entities>
+        <ScenarioObject name = 'ego'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_white'/>
+        </ScenarioObject>
+       <ScenarioObject name = 'c1'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_red'/>
+        </ScenarioObject>
+        <ScenarioObject name = 'c2'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_blue'/>
+        </ScenarioObject>
+        <ScenarioObject name = 'c4'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_blue'/>
+        </ScenarioObject>
+        <ScenarioObject name = 'c5'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_blue'/>
+        </ScenarioObject>
+        <ScenarioObject name = 'c6'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_yellow'/>
+        </ScenarioObject>
+        <ScenarioObject name = 'c7'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_red'/>
+        </ScenarioObject>
+        <ScenarioObject name = 't1'>
+            <CatalogReference catalogName="VehicleCatalog" entryName="semi_truck_with_extra_trailer_rotating_axle"/>
+        </ScenarioObject>
+        <ScenarioObject name = 'motorbike'>
+            <CatalogReference catalogName="VehicleCatalog" entryName="motorbike"/>
+        </ScenarioObject>
+    </Entities>
+
+    <!-- Story -->
+    <Storyboard>
+        <Init>
+            <Actions>
+                <!-- Ego Vehicle -->
+                <Private entityRef='ego'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-3' s='50' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '30'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+
+                <!-- Car 1 (red) -->
+                <Private entityRef='c1'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-2' s='55' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '30'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+
+                <!-- Car 2 (blue) -->
+                <Private entityRef='c2'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-2' s='55' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '30'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+
+                <!-- Car 4 (blue) -->
+                <Private entityRef='c4'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-3' s='58' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '30.3'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+
+
+                <!-- Car 5 (blue) -->
+                <Private entityRef='c5'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-2' s='47' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '30'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+
+
+                <!-- Car 6 (yellow) -->
+                <Private entityRef='c6'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-3' s='41' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '30'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+
+                <!-- Car 7 (red) -->
+                <Private entityRef='c7'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-2' s='38' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '29'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+
+                <!-- Truck 1 -->
+                <Private entityRef='t1'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-4' s='60' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '30'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+
+                <!-- Motorbike -->
+                <Private entityRef='motorbike'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId='0' laneId='-2' s='25' offset = '-1.5' />
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '28'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+            </Actions>
+        </Init>
+
+
+        <Story>
+            <Act name = 'Act1'>
+                <ManeuverGroup maximumExecutionCount="1" >
+                    <Actors>
+                        <EntityRef entityRef = 'c4'/>        
+                    </Actors>
+                    <Maneuver>
+                        <Event name = 'FrontBlueSpeedsUp' priority = 'parallel'>
+                            <Action name ='Blue--SpeedUp'>
+                                <PrivateAction name = 'Blue-Reaching35m/s'>
+                                    <LongitudinalAction>
+                                        <SpeedAction>
+                                            <SpeedActionDynamcis dynamicsShape = 'line' dynamicsDimension = 'time' value = '4' />
+                                            <SpeedActionTarget>
+                                                <AbsoluteTargetSpeed value = '31' />
+                                            </SpeedActionTarget>
+                                        </SpeedAction>
+                                    </LongitudinalAction>
+                                </PrivateAction>
+                            </Action>
+                            <StartTrigger>
+                                <ConditionGroup>
+                                        <Condition name="At7Second(bluecar)" delay="2" conditionEdge="rising">
+                                            <ByValueCondition>
+                                                <SimulationTimeCondition value="7" rule="greaterThan"/>
+                                            </ByValueCondition>
+                                        </Condition>
+                                    </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                    </Maneuver>
+                </ManeuverGroup>
+                <ManeuverGroup maximumExecutionCount = '1'>
+                    <Actors>
+                        <EntityRef entityRef = 'motorbike'/>
+                    </Actors>
+                    <Maneuver>
+                        <Event name = 'motorbikeSpeedsUp' priority = 'overwrite'>
+                            <Action name = 'SpeedingUp'>
+                                <PrivateAction name = 'Reaching35m/s'>
+                                    <LongitudinalAction>
+                                        <SpeedAction>
+                                            <SpeedActionDynamcis dynamicsShape = 'line' dynamicsDimension = 'time' value = '4' />
+                                            <SpeedActionTarget>
+                                                <AbsoluteTargetSpeed value = '35' />
+                                            </SpeedActionTarget>
+                                        </SpeedAction>
+                                    </LongitudinalAction>
+                                </PrivateAction>
+                            </Action>
+                            <StartTrigger>
+                                <ConditionGroup>
+                                    <Condition name="AtBeginning" delay="2" conditionEdge="rising">
+                                        <ByValueCondition>
+                                            <SimulationTimeCondition value="0" rule="greaterThan"/>
+                                        </ByValueCondition>
+                                    </Condition>
+                                </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                        <Event name = 'motorbikeSlowsDown' priority = 'overwrite'>
+                            <Action name = 'SlowingDown'>
+                                <PrivateAction name = 'Reaching35m/s'>
+                                    <LongitudinalAction>
+                                        <SpeedAction>
+                                            <SpeedActionDynamcis dynamicsShape = 'line' dynamicsDimension = 'time' value = '4' />
+                                            <SpeedActionTarget>
+                                                <AbsoluteTargetSpeed value = '30' />
+                                            </SpeedActionTarget>
+                                        </SpeedAction>
+                                    </LongitudinalAction>
+                                </PrivateAction>
+                            </Action>
+                            <StartTrigger>
+                                <ConditionGroup>
+                                    <Condition name="At7Second" delay="2" conditionEdge="rising">
+                                        <ByValueCondition>
+                                            <SimulationTimeCondition value="7" rule="greaterThan"/>
+                                        </ByValueCondition>
+                                    </Condition>
+                                </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                        <Event name = 'motorbikeChangesLaneToEgos' priority = 'parallel'>
+                            <Action name = 'SlowingDown'>
+                                <PrivateAction name = 'Reaching35m/s'>
+                                    <LateralAction>
+                                        <LaneChangeAction>
+                                            <LaneChangeActionDynamics dynamicsShape = 'sinusoidal' dynamicsDimension = 'time' value = '3' />
+                                            <LaneChangeTarget>
+                                                <AbsoluteTargetLane value = '-3' />
+                                            </LaneChangeTarget>
+                                        </LaneChangeAction>
+                                    </LateralAction>
+                                </PrivateAction>
+                                <PrivateAction name = 'Reaching35m/s'>
+                                    <LongitudinalAction>
+                                        <SpeedAction>
+                                            <SpeedActionDynamcis dynamicsShape = 'line' dynamicsDimension = 'time' value = '4' />
+                                            <SpeedActionTarget>
+                                                <AbsoluteTargetSpeed value = '32' />
+                                            </SpeedActionTarget>
+                                        </SpeedAction>
+                                    </LongitudinalAction>
+                                </PrivateAction>
+                            </Action>
+                            <StartTrigger>
+                                <ConditionGroup>
+                                    <Condition name="At7Second" delay="2" conditionEdge="rising">
+                                        <ByValueCondition>
+                                            <SimulationTimeCondition value="10" rule="greaterThan"/>
+                                        </ByValueCondition>
+                                    </Condition>
+                                </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                        <Event name = 'motorbikeChangesLaneToLast' priority = 'parallel'>
+                            <Action name = 'SlowingDown'>
+                                <PrivateAction name = 'Reaching35m/s'>
+                                    <LateralAction>
+                                        <LaneChangeAction>
+                                            <LaneChangeActionDynamics dynamicsShape = 'sinusoidal' dynamicsDimension = 'time' value = '7' />
+                                            <LaneChangeTarget>
+                                                <AbsoluteTargetLane value = '-4' />
+                                            </LaneChangeTarget>
+                                        </LaneChangeAction>
+                                    </LateralAction>
+                                </PrivateAction>
+                                
+                            </Action>
+                            <StartTrigger>
+                                <ConditionGroup>
+                                    <Condition name="At7Second" delay="2" conditionEdge="rising">
+                                        <ByValueCondition>
+                                            <SimulationTimeCondition value="12" rule="greaterThan"/>
+                                        </ByValueCondition>
+                                    </Condition>
+                                </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                    </Maneuver>
+                </ManeuverGroup>
+                
+            </Act>
+        </Story>
+        <StopTrigger>
+            <ConditionGroup>
+                <Condition name="MotorbikeChangedToLastLine" delay="5.0" conditionEdge="rising">
+                    <ByValueCondition>
+                        <StoryboardElementStateCondition storyboardElementType="event" storyboardElementRef="motorbikeChangesLaneToLast" state="endTransition"/>
+                    </ByValueCondition>
+                </Condition>
+            </ConditionGroup>
+        </StopTrigger>
+
+    </Storyboard>
+</OpenSCENARIO>

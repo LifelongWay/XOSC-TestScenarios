@@ -11,7 +11,10 @@ To run the scenarios, make sure the following steps are completed:
    Ensure all OpenDRIVE map files (`.xodr`) referenced in the `.xosc` files (`LogicFile` in `RoadNetwork`) are available in `esmini/resources/maps`.
 
 3. **Scenarios**  
-   Copy your `.xosc` scenario files from `scenarios/` to `esmini/resources/xosc`.
+   Copy `.xosc` scenario files from `scenarios/` to `esmini/resources/xosc`.
+
+4. **Catalogs**
+   Ensure all files in Catalogs are present in your `esmini/resources/xosc/Catalogs`.
 
 Once these are in place, you can launch Esmini and select the scenario from the GUI or run it via command line:
 

@@ -83,7 +83,7 @@
                         </LongitudinalAction>
                     </PrivateAction>
                 </Private>
-
+                
                 <!-- Car 1 (red) -->
                 <Private entityRef='c1'>
                     <PrivateAction>

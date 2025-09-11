@@ -1,0 +1,211 @@
+<OpenSCENARIO>
+    <FileHeader 
+        revMajor = '1' 
+        revMinor = '0' 
+        date = '2025-09-08T23:00:00'
+        description = 'Pedestrian Crossing Lanes at foggy wather'
+        author = 'Amin Abu-Hilga'
+        />
+
+    
+
+    <!-- Loading Catalog for differently colored cars -->
+    <CatalogLocations>
+        <VehicleCatalog>
+            <Directory path = "../xosc/Catalogs/Vehicles"/>
+        </VehicleCatalog>
+    </CatalogLocations>
+
+    <!-- Loading 'e6mini.xodr' road -->
+    <RoadNetwork>
+      <LogicFile filepath="../xodr/e6mini.xodr"/>
+      <SceneGraphFile filepath="../models/e6mini.osgb"/>
+    </RoadNetwork>
+
+    <!-- Defining Ego and Target -->
+    <Entities>
+
+        <!-- Ego Entity -->
+        <ScenarioObject name = 'ego'>
+            <CatalogReference catalogName = 'VehicleCatalog' entryName = 'car_white'/>
+        </ScenarioObject>
+       
+        <!-- Pedestrians Entities -->
+        <ScenarioObject name="pedestrian-1">
+            <Pedestrian mass="80" model="EPTa" name="pedestrian_adult" pedestrianCategory="pedestrian">
+                <ParameterDeclarations/>
+                <BoundingBox>
+                    <Center x="0.06" y="0.0" z="0.923"/>
+                    <Dimensions height="1.8" length="0.6" width="0.5"/>
+                </BoundingBox>
+                <Properties>
+                    <Property name="control" value="internal"/>
+                    <File filepath="../models/walkman.osgb"/>
+                </Properties>
+            </Pedestrian>
+       </ScenarioObject>
+       
+    </Entities>
+
+    <!-- Story -->
+    <Storyboard>
+        <Init>
+            <Actions>
+                <!-- Ego -->
+                <Private entityRef = 'ego'>
+                    <!-- Ego Initial Pos -->
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId = '0' laneId = '-4' s = '20'/>
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+
+                    <!-- Ego Initial Speed -->
+                    <PrivateAction>
+                        <LongitudinalAction>
+                            <SpeedAction>
+                                <SpeedActionDynamics dynamicsShape = 'step' dynamicsDimension = 'time' value = '0'/>
+                                <SpeedActionTarget>
+                                    <AbsoluteTargetSpeed value = '26'/>
+                                </SpeedActionTarget>
+                            </SpeedAction>
+                        </LongitudinalAction>
+                    </PrivateAction>
+                </Private>
+                
+
+                <!-- Pedestrian -->
+                <Private entityRef = 'pedestrian-1'>
+                    <PrivateAction>
+                        <TeleportAction>
+                            <Position>
+                                <LanePosition roadId = '0' laneId = '-5' s = '85'/>
+                            </Position>
+                        </TeleportAction>
+                    </PrivateAction>
+                </Private>
+               
+            </Actions>
+        </Init>
+
+
+        <Story>
+            <Act name = 'Act1'>
+                <ManeuverGroup>
+                    <Actors>
+                        <EntityRef entityRef = 'pedestrian-1'/>
+                    </Actors>
+                    <Maneuver name = 'weather_change'>
+                        <Event name="fogEventDense" priority="overwrite" maximumExecutionCount="1">
+                            <Action name="fogActionDense">
+                                <GlobalAction>
+                                <EnvironmentAction>
+                                        <Environment name="weather">
+                                            <Weather>
+                                                <Fog visualRange="20"/>
+                                            </Weather>
+                                        </Environment>
+                                </EnvironmentAction>
+                                </GlobalAction>
+                            </Action>
+                            <StartTrigger>
+                                <ConditionGroup>
+                                    <Condition name="simcondition" delay="0" conditionEdge="none">
+                                            <ByValueCondition>
+                                                <SimulationTimeCondition value="0.0" rule="greaterOrEqual"/>
+                                            </ByValueCondition>
+                                    </Condition>
+                                </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                    </Maneuver>
+                    <Maneuver name = 'pedestrian_maneuver'>
+                        
+                        <Event maximumExecutionCount = '1' priority = 'overwrite'>
+                            <!-- Setting Pedestrian Walking Speed -->
+                            <Action name="walk_speed">
+                                <PrivateAction>
+                                    <LongitudinalAction>
+                                        <SpeedAction>
+                                            <SpeedActionDynamics dynamicsShape="linear" value="2" dynamicsDimension="rate" />
+                                            <SpeedActionTarget>
+                                                <AbsoluteTargetSpeed value="2"/>
+                                            </SpeedActionTarget>
+                                        </SpeedAction>
+                                    </LongitudinalAction>
+                                </PrivateAction>
+                            </Action>
+
+                            <Action name="walk_route">
+                                <PrivateAction>
+                                    <RoutingAction>
+                                        <FollowTrajectoryAction>
+                                            <Trajectory closed="false" name="ped_traj">
+                                                <ParameterDeclarations/>
+                                                <Shape>
+                                                    <Polyline>
+                                                        <Vertex>
+                                                            <Position>
+                                                                <LanePosition laneId="-5" offset="0.5" roadId="0" s="84.5" >
+                                                                    <Orientation type="relative" h="3.14" p="0" r="0" />
+                                                                </LanePosition>
+                                                            </Position>
+                                                        </Vertex>
+                                                        <Vertex>
+                                                            <Position>
+                                                                <LanePosition laneId="-1" offset="0" roadId="0" s="84.5" >
+                                                                    <Orientation type="relative" h="0" p="0" r="0" />
+                                                                </LanePosition>
+                                                            </Position>
+                                                        </Vertex>
+                                                    </Polyline>
+                                                </Shape>
+                                            </Trajectory>
+                                            <TimeReference>
+                                                <None/>
+                                            </TimeReference>
+                                            <TrajectoryFollowingMode followingMode="follow"/>
+                                        </FollowTrajectoryAction>
+                                    </RoutingAction>
+                                </PrivateAction>
+                            </Action>
+
+                            <StartTrigger>
+                                <ConditionGroup>
+                                    <Condition conditionEdge="rising" delay="0" name="ped_walk_event">
+                                        <ByEntityCondition>
+                                            <TriggeringEntities triggeringEntitiesRule="any">
+                                                <EntityRef entityRef="ego"/>
+                                            </TriggeringEntities>
+                                            <EntityCondition>
+                                                <TraveledDistanceCondition value="5"/>
+                                            </EntityCondition>
+                                        </ByEntityCondition>
+                                    </Condition>
+                                </ConditionGroup>
+                            </StartTrigger>
+                        </Event>
+                    </Maneuver>
+                </ManeuverGroup>
+                
+            </Act>
+        </Story>
+        <StopTrigger>
+           <ConditionGroup>
+                <Condition conditionEdge="rising" delay="0" name="ped_walk_event">
+                    <ByEntityCondition>
+                        <TriggeringEntities triggeringEntitiesRule="any">
+                            <EntityRef entityRef="ego"/>
+                        </TriggeringEntities>
+                        <EntityCondition>
+                            <TraveledDistanceCondition value="120"/>
+                        </EntityCondition>
+                    </ByEntityCondition>
+                </Condition>
+            </ConditionGroup>
+        </StopTrigger>
+
+    </Storyboard>
+</OpenSCENARIO>
